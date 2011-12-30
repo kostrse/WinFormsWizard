@@ -5,7 +5,6 @@ The code is originally based on TSWizard library (http://www.codeproject.com/KB/
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace MayMart.WinFormsWizard

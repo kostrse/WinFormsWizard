@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("MAY-MART")]
 [assembly: AssemblyProduct("MAY-MART WinFormsWizard")]
-[assembly: AssemblyCopyright("� 2005, 2011 MAY-MART")]
+[assembly: AssemblyCopyright("© 2005, 2011 MAY-MART")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
