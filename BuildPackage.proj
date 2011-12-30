@@ -12,13 +12,13 @@
     <ApplicationVersion Condition="$(ApplicationVersion) == ''">$(BUILD_NUMBER)</ApplicationVersion>
 	<ZipPackageName>WinFormsWizard.$(ApplicationVersion).zip</ZipPackageName>
     <NuSpecFile>WinFormsWizard.nuspec</NuSpecFile>
-	<NuGetApiKey>$(NUGET_API_KEY)</NuGetApiKey>
+	<NuGetApiKey Condition="$(NuGetApiKey) == ''">$(NUGET_API_KEY)</NuGetApiKey>
   </PropertyGroup>
 
   <PropertyGroup>
     <MSBuildCommunityTasksPath Condition="'$(MSBuildCommunityTasksPath)' == ''">$(MSBuildExtensionsPath)\MSBuildCommunityTasks</MSBuildCommunityTasksPath>
     <MSBuildCommunityTasksLib>$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.dll</MSBuildCommunityTasksLib>
-    <NuGetMSBuildLib>$(MSBuildExtensionsPath)\NuGet.MSBuild.dll</MSBuildCommunityTasksLib>
+    <NuGetMSBuildLib>$(MSBuildExtensionsPath)\NuGet.MSBuild.dll</NuGetMSBuildLib>
   </PropertyGroup>
 
   <UsingTask AssemblyFile="$(MSBuildCommunityTasksLib)" TaskName="MSBuild.Community.Tasks.FileUpdate" />
