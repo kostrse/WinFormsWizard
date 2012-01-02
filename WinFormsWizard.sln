@@ -3,6 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MayMart.WinFormsWizard", "MayMart.WinFormsWizard.csproj", "{5118AF4F-C7AD-41B6-BB0D-3125F7A208F9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{540180FB-A219-4952-B67D-0BE59969E94B}"
+	ProjectSection(SolutionItems) = preProject
+		BuildPackage.proj = BuildPackage.proj
+		WinFormsWizard.nuspec = WinFormsWizard.nuspec
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

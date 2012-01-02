@@ -3,10 +3,12 @@
   <metadata>
     <id>WinFormsWizard</id>
     <version>0.0.0.0</version>
+    <title>WinForms Wizard Library</title>
     <authors>MAY-MART</authors>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Wizard UI library for WinForms.</description>
-  <tags>wizard WinForms Forms TSWizard</tags>
+    <projectUrl>https://bitbucket.org/maymart/winformswizard</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <tags>wizard WinForms Forms TSWizard</tags>
   </metadata>
   <files>
     <file src="bin\Release\MayMart.WinFormsWizard.dll" target="lib" />
