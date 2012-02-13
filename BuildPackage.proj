@@ -10,7 +10,7 @@
 
   <PropertyGroup>
     <ApplicationVersion Condition="$(ApplicationVersion) == ''">$(BUILD_NUMBER)</ApplicationVersion>
-    <SnkFile Condition="$(SnkFile) == ''">$(SNK_FILE)</SnkFile>
+    <LibProjectFile>MayMart.WinFormsWizard.csproj</LibProjectFile>
     <ZipPackageName>WinFormsWizard.$(ApplicationVersion).zip</ZipPackageName>
     <NuSpecFile>WinFormsWizard.nuspec</NuSpecFile>
   </PropertyGroup>
@@ -19,42 +19,40 @@
     <MSBuildCommunityTasksPath Condition="'$(MSBuildCommunityTasksPath)' == ''">$(MSBuildExtensionsPath)\MSBuildCommunityTasks</MSBuildCommunityTasksPath>
     <MSBuildCommunityTasksLib>$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.dll</MSBuildCommunityTasksLib>
     <NuGetMSBuildLib>$(MSBuildExtensionsPath)\NuGet.MSBuild.dll</NuGetMSBuildLib>
+    <MayMartTasksLib>$(MSBuildExtensionsPath)\MayMart.MsBuildTasks.dll</MayMartTasksLib>
   </PropertyGroup>
 
-  <UsingTask AssemblyFile="$(MSBuildCommunityTasksLib)" TaskName="MSBuild.Community.Tasks.FileUpdate" />
   <UsingTask AssemblyFile="$(MSBuildCommunityTasksLib)" TaskName="MSBuild.Community.Tasks.Zip" />
   <UsingTask AssemblyFile="$(NuGetMSBuildLib)" TaskName="NuGet.MSBuild.NuGet" />
+  <UsingTask AssemblyFile="$(MayMartTasksLib)" TaskName="MayMart.MsBuildTasks.SetStrongName" />
+  <UsingTask AssemblyFile="$(MayMartTasksLib)" TaskName="MayMart.MsBuildTasks.SetVersion" />
 
   <Target Name="Build">
     <CallTarget Targets="CreateZipPackage;CreateNuGetPackage" />
   </Target>
   
-  <Target Name="UpdateAssemblyVersion">
+  <Target Name="BuildApplication">
     <Error Condition="$(ApplicationVersion) == ''" Text="Application version is not set via 'ApplicationVersion' MSBuild property." />
-    <FileUpdate Files="@(AssemblyInfoFiles)" Multiline="True" Regex="(?&lt;=^\[assembly: AssemblyVersion\(&quot;)0.0.0.0(?=&quot;\)\])" ReplacementText="$(ApplicationVersion)" />
-    <FileUpdate Files="@(AssemblyInfoFiles)" Multiline="True" Regex="(?&lt;=^\[assembly: AssemblyFileVersion\(&quot;)0.0.0.0(?=&quot;\)\])" ReplacementText="$(ApplicationVersion)" />
-  </Target>
-  
-  <Target Name="BuildApplication" DependsOnTargets="UpdateAssemblyVersion">
-    <PropertyGroup>
-      <StrongNameProperties Condition="$(SnkFile) != ''">$(MSBuildProperties);SignAssembly=true;AssemblyOriginatorKeyFile=$(SnkFile)</StrongNameProperties>
-    </PropertyGroup>
-    <MSBuild Projects="@(ProjectToBuild)" Targets="Clean;Build" Properties="Configuration=Release;$(StrongNameProperties)" />
+
+    <SetVersion Files="@(AssemblyInfoFiles)" Version="$(ApplicationVersion)" />
+    <SetStrongName ProjectFiles="$(LibProjectFile)" SnkFile="$(SnkFile)" Condition="$(SnkFile) != ''" />
+
+    <MSBuild Projects="@(ProjectToBuild)" Targets="Clean;Build" Properties="Configuration=Release" />
   </Target>
 
   <Target Name="CreateZipPackage" DependsOnTargets="BuildApplication">
     <ItemGroup>
       <FilesToZip Include="bin\Release\*.*" />
     </ItemGroup>
+	
     <Zip Files="@(FilesToZip)" WorkingDirectory="bin\Release" ZipFileName="$(ZipPackageName)" />
   </Target>
   
-  <Target Name="UpdateNuSpecVersion">
+  <Target Name="CreateNuGetPackage">
     <Error Condition="$(ApplicationVersion) == ''" Text="Application version is not set via 'ApplicationVersion' MSBuild property." />
-    <FileUpdate Files="$(NuSpecFile)" Regex="(?&lt;=&lt;version&gt;)0\.0\.0\.0(?=&lt;/version&gt;)" ReplacementText="$(ApplicationVersion)" />
-  </Target>
 
-  <Target Name="CreateNuGetPackage" DependsOnTargets="UpdateNuSpecVersion">
+    <SetVersion Files="$(NuSpecFile)" Version="$(ApplicationVersion)" />
+
     <NuGet SpecFile="$(NuSpecFile)" />
   </Target>
 

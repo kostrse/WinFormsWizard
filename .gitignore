@@ -4,3 +4,6 @@ obj/
 *.user
 *.suo
 _ReSharper.*
+TestResults/
+*.dbproj.schemaview
+*.dbmdl
