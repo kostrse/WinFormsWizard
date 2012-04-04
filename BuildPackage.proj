@@ -1,59 +1,32 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
 
-  <ItemGroup>
-    <ProjectToBuild Include="WinFormsWizard.sln" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <AssemblyInfoFiles Include="**\AssemblyInfo.cs" />
-  </ItemGroup>
-
   <PropertyGroup>
     <ApplicationVersion Condition="$(ApplicationVersion) == ''">$(BUILD_NUMBER)</ApplicationVersion>
-    <LibProjectFile>MayMart.WinFormsWizard.csproj</LibProjectFile>
-    <ZipPackageName>WinFormsWizard.$(ApplicationVersion).zip</ZipPackageName>
-    <NuSpecFile>WinFormsWizard.nuspec</NuSpecFile>
+    <SnkFile Condition="$(SnkFile) == ''"></SnkFile>
   </PropertyGroup>
 
   <PropertyGroup>
-    <MSBuildCommunityTasksPath Condition="'$(MSBuildCommunityTasksPath)' == ''">$(MSBuildExtensionsPath)\MSBuildCommunityTasks</MSBuildCommunityTasksPath>
-    <MSBuildCommunityTasksLib>$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.dll</MSBuildCommunityTasksLib>
-    <NuGetMSBuildLib>$(MSBuildExtensionsPath)\NuGet.MSBuild.dll</NuGetMSBuildLib>
     <MayMartTasksLib>$(MSBuildExtensionsPath)\MayMart.MsBuildTasks.dll</MayMartTasksLib>
   </PropertyGroup>
 
-  <UsingTask AssemblyFile="$(MSBuildCommunityTasksLib)" TaskName="MSBuild.Community.Tasks.Zip" />
-  <UsingTask AssemblyFile="$(NuGetMSBuildLib)" TaskName="NuGet.MSBuild.NuGet" />
-  <UsingTask AssemblyFile="$(MayMartTasksLib)" TaskName="MayMart.MsBuildTasks.SetStrongName" />
   <UsingTask AssemblyFile="$(MayMartTasksLib)" TaskName="MayMart.MsBuildTasks.SetVersion" />
+  <UsingTask AssemblyFile="$(MayMartTasksLib)" TaskName="MayMart.MsBuildTasks.SetStrongName" />
 
   <Target Name="Build">
-    <CallTarget Targets="CreateZipPackage;CreateNuGetPackage" />
+    <Error Condition="$(ApplicationVersion) == ''" Text="Application version is not set via 'ApplicationVersion' MSBuild property." />
+
+    <ItemGroup>
+      <SetVersionFiles Include="**\AssemblyInfo.cs" />
+    </ItemGroup>
+
+    <SetVersion Files="@(SetVersionFiles)" Version="$(ApplicationVersion)" />
+
+    <SetStrongName ProjectFiles="MayMart.WinFormsWizard.csproj" SnkFile="$(SnkFile)" Condition="$(SnkFile) != ''" />
+
+    <MSBuild Projects="WinFormsWizard.sln" Targets="Clean;Build" Properties="Configuration=Release" />
   </Target>
   
   <Target Name="BuildApplication">
-    <Error Condition="$(ApplicationVersion) == ''" Text="Application version is not set via 'ApplicationVersion' MSBuild property." />
-
-    <SetVersion Files="@(AssemblyInfoFiles)" Version="$(ApplicationVersion)" />
-    <SetStrongName ProjectFiles="$(LibProjectFile)" SnkFile="$(SnkFile)" Condition="$(SnkFile) != ''" />
-
-    <MSBuild Projects="@(ProjectToBuild)" Targets="Clean;Build" Properties="Configuration=Release" />
-  </Target>
-
-  <Target Name="CreateZipPackage" DependsOnTargets="BuildApplication">
-    <ItemGroup>
-      <FilesToZip Include="bin\Release\*.*" />
-    </ItemGroup>
-	
-    <Zip Files="@(FilesToZip)" WorkingDirectory="bin\Release" ZipFileName="$(ZipPackageName)" />
-  </Target>
-  
-  <Target Name="CreateNuGetPackage">
-    <Error Condition="$(ApplicationVersion) == ''" Text="Application version is not set via 'ApplicationVersion' MSBuild property." />
-
-    <SetVersion Files="$(NuSpecFile)" Version="$(ApplicationVersion)" />
-
-    <NuGet SpecFile="$(NuSpecFile)" />
   </Target>
 
 </Project>
